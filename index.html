@@ -243,6 +243,58 @@
   .naverbtn:hover { filter: brightness(1.06); }
   .naverbtn svg { width: 13px; height: 13px; }
 
+  .altbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: none;
+    border: 1px dashed var(--line);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .altbtn:hover { border-color: var(--accent); }
+  .altbtn svg { width: 11px; height: 11px; transition: transform .15s; }
+  .altbtn[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+  .altpanel {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .altpanel[hidden] { display: none; }
+  .altpanel .altlabel {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 700;
+  }
+  .altitem { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .altitem .altmain { min-width: 0; }
+  .altitem .altname { font-size: 13.5px; font-weight: 600; }
+  .altitem .altnote { font-size: 12.5px; color: var(--ink-dim); margin-top: 1px; }
+  .altitem a {
+    flex: none;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+  }
+  .altitem a:hover { filter: brightness(1.08); }
+
   .divider-note {
     text-align: center;
     font-size: 12.5px;
@@ -365,13 +417,21 @@
           id: "d1-3b", time: "09:10–09:30", tag: "카페", title: "바다 보며 아이스크림",
           place: "브알라 Cafe · 리센오션파크 B동", meta: "🚶 해변에서 도보 · 저장 폴더 픽",
           desc: "리센오션파크 상가 1층, 해변 바로 앞 아이스크림 카페. 가볍게 하나 물고 다음 장소로.",
-          naver: "속초 브알라 카페 리센오션파크"
+          naver: "속초 브알라 카페 리센오션파크",
+          alts: [
+            { name: "팰리시다드 카페", note: "같은 구역(조양동), 저장 폴더 픽 · 감성 인테리어", naver: "속초 팰리시다드 카페" },
+            { name: "보사노바 커피로스터스 속초점", note: "조양동, 저장 폴더 픽 · 스페셜티 원두 로스팅", naver: "속초 보사노바 커피로스터스" }
+          ]
         },
         {
           id: "d1-2", time: "10:00–11:00", tag: "아침", warn: true, title: "감자옹심이로 속초 신고식",
           place: "감나무집 감자옹심이", meta: "⏰ 10:00 오픈, 회전율 빨라 대기 10분 내외 · 🚗 차량 약 15분",
           desc: "속초 옹심이집의 원조 격. 쫀득한 감자옹심이 반죽에 들깨가루 듬뿍. 오픈 시간에 맞춰 줄 서면 금방 들어가요.",
-          naver: "속초 감나무집 감자옹심이"
+          naver: "속초 감나무집 감자옹심이",
+          alts: [
+            { name: "속초신토불이감자옹심이", note: "중앙시장 종합상가 1층 · 들깨감자옹심이 대표메뉴", naver: "속초신토불이감자옹심이" },
+            { name: "공가네감자옹심이", note: "11시 오픈이라 살짝 늦게 움직여도 OK", naver: "속초 공가네감자옹심이" }
+          ]
         },
         {
           id: "d1-6", time: "11:00–11:40", tag: "체험", title: "아바이마을 · 갯배",
@@ -383,13 +443,22 @@
           id: "d1-7", time: "11:50–12:30", tag: "점심", title: "중앙시장에서 점심 + 소품샵",
           place: "중앙시장 · 포토이즘박스 · 너와의순간(2층)", meta: "🚶 도보 이동 · 닭강정·오징어순대로 가볍게",
           desc: "옹심이로 아침을 든든히 먹었으니, 점심은 닭강정·오징어순대·튀김 등 시장 먹거리로 가볍게. 포토이즘박스에서 인생네컷 찍고, 시장 2층 소품샵도 구경.",
-          naver: "속초중앙시장"
+          naver: "속초중앙시장",
+          alts: [
+            { name: "속초항아리물회", note: "조양동, 저장 폴더 픽 · 앉아서 먹는 물회가 낫다면", naver: "속초항아리물회" },
+            { name: "봉포머구리집", note: "영랑동, 저장 폴더 픽 · 물회로 유명한 집", naver: "속초 봉포머구리집" }
+          ]
         },
         {
           id: "d1-cafe", time: "12:40–13:50", tag: "카페", title: "우드톤 카페에서 여유롭게",
           place: "셜터 SHLTR · 청호해안길 97", meta: "🚗 차량 약 10분 · 매일 09:30–20:00",
           desc: "차분한 우드톤 인테리어에 통창 너머 파도 소리까지 — 오래 머물러도 편한 자리. 체크인 전 남는 시간을 여기서 느긋하게.",
-          naver: "속초 셜터 SHLTR"
+          naver: "속초 셜터 SHLTR",
+          alts: [
+            { name: "크로프트커피 속초점", note: "영랑동, 저장 폴더 픽", naver: "속초 크로프트커피" },
+            { name: "카페 우디", note: "영랑동, 저장 폴더 픽", naver: "속초 카페 우디" },
+            { name: "어나더블루", note: "장사항 · 루프탑에서 바다 조망", naver: "속초 어나더블루 장사항" }
+          ]
         },
         {
           id: "d1-8", time: "14:00–15:00", tag: "이동", title: "숙소로 이동 · 체크인",
@@ -407,13 +476,23 @@
           id: "d1-10", time: "18:00–19:30", tag: "저녁", title: "동명동에서 참치회 저녁",
           place: "소가키운참치 · 동명동", meta: "🚶 숙소에서 도보권 · 저장 폴더 픽",
           desc: "숙소 바로 근처, 회식 느낌 나는 참치회 한 상. 걸어서 갔다가 걸어서 돌아올 수 있어요.",
-          naver: "속초 소가키운참치 동명동"
+          naver: "속초 소가키운참치 동명동",
+          alts: [
+            { name: "정든식당", note: "동명동, 저장 폴더 픽 · 장칼국수·만두", naver: "속초 정든식당 동명동" },
+            { name: "비오네손칼국수", note: "동명동, 저장 폴더 픽", naver: "속초 비오네손칼국수" },
+            { name: "달빛돈가 속초본점", note: "조양동, 저장 폴더 픽 · 고기요리", naver: "속초 달빛돈가" }
+          ]
         },
         {
           id: "d1-11", time: "19:30–", tag: "저녁", title: "동명동 밤거리",
           place: "아프리카 · 동명동", meta: "🚶 저녁 식사 자리에서 도보 · 저장 폴더 픽",
-          desc: "골목 안 힙한 아지트st일 술집, 방마다 콘셉트가 다른 프라이빗 룸도 있어요. 조용히 한잔 하고 싶으면 근처 바다담다 카페에서 디저트로 마무리해도 좋고, 이자카야로 옮기고 싶으면 월간속초(조양동, 4인 이하·18시 오픈예약제)도 고려해보세요.",
-          naver: "속초 아프리카 동명동"
+          desc: "골목 안 힙한 아지트st일 술집, 방마다 콘셉트가 다른 프라이빗 룸도 있어요. 조용히 한잔 하고 싶으면 근처 바다담다 카페에서 디저트로 마무리해도 좋아요.",
+          naver: "속초 아프리카 동명동",
+          alts: [
+            { name: "월간속초", note: "조양동, 이자카야 · ⚠️ 4인 이하·18시 오픈예약제", naver: "속초 월간속초 이자카야" },
+            { name: "속초백수씨심야식당", note: "동명동, 저장 폴더 픽 · 늦게까지 야식", naver: "속초백수씨심야식당" },
+            { name: "주오일심야라멘", note: "영랑동, 저장 폴더 픽 · 라멘에 가볍게 한잔", naver: "속초 주오일심야라멘" }
+          ]
         }
       ]
     },
@@ -430,7 +509,11 @@
           id: "d2-1", time: "08:30–09:30", tag: "아침", title: "순댓국으로 해장",
           place: "88순대국 · 금호동", meta: "🚗 숙소에서 차량 약 10분 · 저장 폴더 픽",
           desc: "전날 저녁 여파를 풀어줄 뜨끈한 순댓국. 부담 없이 든든하게 채우고 출발.",
-          naver: "속초 88순대국"
+          naver: "속초 88순대국",
+          alts: [
+            { name: "황태만상", note: "황태해장국 · 아침 일찍 영업", naver: "속초 황태만상" },
+            { name: "또만나식당", note: "황태해장국 · 07:00–16:00", naver: "속초 또만나식당" }
+          ]
         },
         {
           id: "d2-2", time: "09:30–10:30", tag: "휴식", title: "체크아웃 준비 + 아침 산책",
@@ -442,7 +525,11 @@
           id: "d2-3", time: "11:00–12:30", tag: "점심", title: "냉면으로 가볍게 마무리",
           place: "단천면옥 · 조양동", meta: "🚗 차량 약 15분 · 저장 폴더 픽 · 마지막 식사",
           desc: "긴 귀경길 앞두고 부담 없이 먹기 좋은 냉면. 이게 이번 여행 마지막 한 끼예요.",
-          naver: "속초 단천면옥"
+          naver: "속초 단천면옥",
+          alts: [
+            { name: "하마식당", note: "영랑동, 저장 폴더 픽 · 일식당", naver: "속초 하마식당 영랑동" },
+            { name: "소가키운참치", note: "동명동, 저장 폴더 픽 · 전날 저녁과 겹치면 패스", naver: "속초 소가키운참치 동명동" }
+          ]
         },
         {
           id: "d2-end", time: "12:30", tag: "이동", title: "서울로 출발",
@@ -527,6 +614,32 @@
             '네이버 지도' +
           '</a>'
         : '';
+
+      var altBtn = "", altPanel = "";
+      if (c.alts && c.alts.length) {
+        var panelId = c.id + "-alts";
+        altBtn =
+          '<button class="altbtn" type="button" aria-expanded="false" aria-controls="' + panelId + '">' +
+            '여기 못 가면?' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>' +
+          '</button>';
+        altPanel =
+          '<div class="altpanel" id="' + panelId + '" hidden>' +
+            '<div class="altlabel">대신 갈 만한 곳</div>' +
+            c.alts.map(function (a) {
+              var link = a.naver
+                ? '<a href="' + naverUrl(a.naver) + '" target="_blank" rel="noopener">네이버 지도</a>'
+                : '';
+              return (
+                '<div class="altitem">' +
+                  '<div class="altmain"><div class="altname">' + a.name + '</div><div class="altnote">' + a.note + '</div></div>' +
+                  link +
+                '</div>'
+              );
+            }).join("") +
+          '</div>';
+      }
+
       return (
         '<article class="card" id="' + c.id + '" data-id="' + c.id + '">' +
           '<div class="card-top">' +
@@ -537,7 +650,8 @@
           '<p class="place">' + c.place + '</p>' +
           '<p class="desc">' + c.desc + '</p>' +
           '<p class="meta">' + c.meta + '</p>' +
-          naverBtn +
+          naverBtn + altBtn +
+          altPanel +
         '</article>'
       );
     }).join('<div class="divider-note"></div>');
@@ -545,6 +659,16 @@
 
     timelineEl.querySelectorAll(".card").forEach(function (card) {
       card.addEventListener("mouseenter", function () { setActive(card.getAttribute("data-id"), false); });
+    });
+
+    timelineEl.querySelectorAll(".altbtn").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var panel = document.getElementById(btn.getAttribute("aria-controls"));
+        var open = btn.getAttribute("aria-expanded") === "true";
+        btn.setAttribute("aria-expanded", String(!open));
+        if (panel) panel.hidden = open;
+      });
     });
   }
 
