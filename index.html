@@ -148,6 +148,7 @@
 
   /* ---------- Layout ---------- */
   .layout { display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+  .layout[hidden] { display: none; }
   @media (max-width: 780px) { .layout { grid-template-columns: 1fr; } }
 
   .mapcol {
@@ -302,6 +303,41 @@
     padding: 6px 0;
   }
 
+  /* ---------- All-view (모아보기) ---------- */
+  .allgroup { margin-bottom: 28px; }
+  .allgroup:last-child { margin-bottom: 0; }
+  .allgroup-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .allgroup-head h3 { margin: 0; font-size: 18px; }
+  .allgroup-head .count { font-size: 12.5px; color: var(--ink-dim); }
+  .allgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .placecard {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .placecard-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+  .placecard-badges .tag { font-size: 10.5px; padding: 2px 7px; }
+  .placecard-badges .tag.alt { background: var(--surface-2); color: var(--ink-dim); }
+  .placecard-name { font-size: 15px; font-weight: 700; }
+  .placecard-note { font-size: 13px; color: var(--ink-dim); flex: 1; }
+  .placecard .naverbtn { align-self: flex-start; padding: 5px 10px; font-size: 12.5px; }
+
   /* ---------- Footer ---------- */
   footer {
     margin-top: 34px;
@@ -340,16 +376,19 @@
     </div>
   </header>
 
-  <nav class="daytabs" role="tablist" aria-label="일자 선택">
-    <button class="daytab" id="tab-1" role="tab" aria-selected="true" data-day="1">
+  <nav class="daytabs" role="tablist" aria-label="보기 선택">
+    <button class="daytab" id="tab-1" role="tab" aria-selected="true" data-view="1">
       <span class="num">DAY 1</span> 7.11(토) · 도착~숙소~저녁
     </button>
-    <button class="daytab" id="tab-2" role="tab" aria-selected="false" data-day="2">
+    <button class="daytab" id="tab-2" role="tab" aria-selected="false" data-view="2">
       <span class="num">DAY 2</span> 7.12(일) · 아침~점심~귀경
+    </button>
+    <button class="daytab" id="tab-all" role="tab" aria-selected="false" data-view="all">
+      <span class="num">모아보기</span> 카페·음식점·놀거리
     </button>
   </nav>
 
-  <div class="layout">
+  <div class="layout" id="layout">
     <aside class="mapcol">
       <h3>동선 지도 (개략도)</h3>
       <svg class="routemap" viewBox="0 0 100 130" id="map"></svg>
@@ -359,6 +398,8 @@
 
     <section class="timeline" id="timeline"></section>
   </div>
+
+  <section class="allview" id="allview" hidden></section>
 
   <footer>
     <h5>참고 자료 (2026.07 기준, 방문 전 최신 영업시간 확인 권장)</h5>
@@ -692,20 +733,95 @@
 
   function focusItem(id) { setActive(id, true); }
 
-  function renderDay(day) {
+  var GROUP_TAGS = {
+    "카페": ["카페"],
+    "음식점": ["아침", "점심", "저녁"],
+    "놀거리": ["구경", "쇼핑", "바다", "산책"]
+  };
+  var GROUP_ORDER = ["카페", "음식점", "놀거리"];
+  var layoutEl = document.getElementById("layout");
+  var allviewEl = document.getElementById("allview");
+
+  function buildAllPlaces() {
+    var groups = {};
+    GROUP_ORDER.forEach(function (g) { groups[g] = []; });
+
+    [1, 2].forEach(function (dayNum) {
+      DATA[dayNum].cards.forEach(function (c) {
+        var group = GROUP_ORDER.filter(function (g) { return GROUP_TAGS[g].indexOf(c.tag) !== -1; })[0];
+        if (!group) return;
+
+        groups[group].push({
+          name: c.place, note: c.title, naver: c.naver,
+          badge: "DAY " + dayNum + " · " + c.time, isAlt: false
+        });
+
+        (c.alts || []).forEach(function (a) {
+          groups[group].push({
+            name: a.name, note: a.note, naver: a.naver,
+            badge: "대안 · DAY " + dayNum, isAlt: true
+          });
+        });
+      });
+    });
+    return groups;
+  }
+
+  function renderAllView() {
+    var groups = buildAllPlaces();
+    allviewEl.innerHTML = GROUP_ORDER.map(function (g) {
+      var items = groups[g];
+      if (!items.length) return "";
+      var cards = items.map(function (p) {
+        var naverBtn = p.naver
+          ? '<a class="naverbtn" href="' + naverUrl(p.naver) + '" target="_blank" rel="noopener">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.58 7-13A7 7 0 0 0 5 9c0 5.42 7 13 7 13z"/><circle cx="12" cy="9" r="2.4"/></svg>' +
+              '네이버 지도' +
+            '</a>'
+          : "";
+        return (
+          '<article class="placecard">' +
+            '<div class="placecard-badges"><span class="tag' + (p.isAlt ? ' alt' : '') + '">' + p.badge + '</span></div>' +
+            '<div class="placecard-name">' + p.name + '</div>' +
+            '<div class="placecard-note">' + p.note + '</div>' +
+            naverBtn +
+          '</article>'
+        );
+      }).join("");
+      return (
+        '<div class="allgroup">' +
+          '<div class="allgroup-head"><h3>' + g + '</h3><span class="count">' + items.length + '곳</span></div>' +
+          '<div class="allgrid">' + cards + '</div>' +
+        '</div>'
+      );
+    }).join("");
+  }
+
+  function renderView(view) {
+    tabs.forEach(function (t) {
+      t.setAttribute("aria-selected", String(t.getAttribute("data-view") === view));
+    });
+
+    if (view === "all") {
+      layoutEl.hidden = true;
+      allviewEl.hidden = false;
+      renderAllView();
+      return;
+    }
+
+    var day = Number(view);
     currentDay = day;
+    layoutEl.hidden = false;
+    allviewEl.hidden = true;
     renderMap(day);
     renderLegend(day);
     renderTimeline(day);
-    tabs.forEach(function (t) {
-      t.setAttribute("aria-selected", String(Number(t.getAttribute("data-day")) === day));
-    });
   }
 
   tabs.forEach(function (t) {
-    t.addEventListener("click", function () { renderDay(Number(t.getAttribute("data-day"))); });
+    t.addEventListener("click", function () { renderView(t.getAttribute("data-view")); });
   });
 
-  renderDay(1);
+  renderView("1");
 })();
 </script>
